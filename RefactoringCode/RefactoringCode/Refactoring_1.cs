@@ -35,17 +35,21 @@ namespace RefactoringCode
 
             foreach (var pref in invoice.Performances)
             {
-                var player = plays[pref.PlayerId];
-                double thisAmount = AmountFor(player, pref);
+                double thisAmount = AmountFor(pref, PlayFor(plays, pref));
 
                 volumneCredits += Math.Max(pref.Audiance - 30d, 0d);
-                if (player.Type == "comedy")
+                if (PlayFor(plays, pref).Type == "comedy")
                 {
                     volumneCredits += Math.Floor(pref.Audiance / 5);
                 }
 
-                result += $"{player.Name}:{thisAmount}:{pref.Audiance}석";
+                result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
+        }
+
+        public Player PlayFor(Dictionary<int, Player> plays, Performance perf)
+        {
+            return plays[perf.PlayerId];
         }
 
         public double AmountFor(Performance aPerformance, Player player)
