@@ -36,25 +36,7 @@ namespace RefactoringCode
             foreach (var pref in invoice.Performances)
             {
                 var player = plays[pref.PlayerId];
-                double thisAmount = 0;
-
-                switch (player.Type)
-                {
-                    case "tragedy":
-                        thisAmount = 3000;
-                        if (pref.Audiance > 30)
-                        {
-                            thisAmount += 1000 * (pref.Audiance);
-                        }
-                        break;
-                    case "comedy":
-                        thisAmount = 4000;
-                        if (pref.Audiance > 20)
-                        {
-                            thisAmount += 1000 + 500 * (pref.Audiance);
-                        }
-                        break;
-                }
+                double thisAmount = AmountFor(player, pref);
 
                 volumneCredits += Math.Max(pref.Audiance - 30d, 0d);
                 if (player.Type == "comedy")
@@ -64,6 +46,30 @@ namespace RefactoringCode
 
                 result += $"{player.Name}:{thisAmount}:{pref.Audiance}석";
             }
+        }
+
+        public double AmountFor(Performance aPerformance, Player player)
+        {
+            double result = 0;
+            switch (player.Type)
+            {
+                case "tragedy":
+                    result = 3000;
+                    if (aPerformance.Audiance > 30)
+                    {
+                        result += 1000 * (aPerformance.Audiance);
+                    }
+                    break;
+                case "comedy":
+                    result = 4000;
+                    if (aPerformance.Audiance > 20)
+                    {
+                        result += 1000 + 500 * (aPerformance.Audiance);
+                    }
+                    break;
+            }
+
+            return result;
         }
     }
 }
