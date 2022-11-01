@@ -35,7 +35,7 @@ namespace RefactoringCode
 
             foreach (var pref in invoice.Performances)
             {
-                double thisAmount = AmountFor(pref, PlayFor(plays, pref));
+                double thisAmount = AmountFor(pref, plays);
 
                 volumneCredits += Math.Max(pref.Audiance - 30d, 0d);
                 if (PlayFor(plays, pref).Type == "comedy")
@@ -52,10 +52,10 @@ namespace RefactoringCode
             return plays[perf.PlayerId];
         }
 
-        public double AmountFor(Performance aPerformance, Player player)
+        public double AmountFor(Performance aPerformance, Dictionary<int, Player> plays)
         {
             double result = 0;
-            switch (player.Type)
+            switch (PlayFor(plays, aPerformance).Type)
             {
                 case "tragedy":
                     result = 3000;
