@@ -24,7 +24,7 @@ namespace RefactoringCode
         public void Statement(Invoice invoice, Dictionary<int, Player> plays)
         {
             var totalAmount = 0;
-            double volumeCredits = 0;
+            
             var result = "청구 내역";
             const string format = $"";
 
@@ -34,6 +34,7 @@ namespace RefactoringCode
                 result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
+            double volumeCredits = 0;
             foreach (var pref in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(pref, plays);
