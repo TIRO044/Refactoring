@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace RefactoringCode
 {
@@ -29,22 +24,28 @@ namespace RefactoringCode
         public void Statement(Invoice invoice, Dictionary<int, Player> plays)
         {
             var totalAmount = 0;
-            double volumneCredits = 0;
+            double volumeCredits = 0;
             var result = "청구 내역";
             const string format = $"";
 
             foreach (var pref in invoice.Performances)
             {
                 double thisAmount = AmountFor(pref, plays);
-
-                volumneCredits += Math.Max(pref.Audiance - 30d, 0d);
-                if (PlayFor(plays, pref).Type == "comedy")
-                {
-                    volumneCredits += Math.Floor(pref.Audiance / 5);
-                }
-
+                volumeCredits += VolumeCreditsFor(pref, plays);
                 result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
+        }
+
+        public double VolumeCreditsFor(Performance pref, Dictionary<int, Player> plays)
+        {
+            double volumeCredits = 0;
+            volumeCredits += Math.Max(pref.Audiance - 30d, 0d);
+            if (PlayFor(plays, pref).Type == "comedy")
+            {
+                volumeCredits += Math.Floor(pref.Audiance / 5);
+            }
+
+            return volumeCredits;
         }
 
         public Player PlayFor(Dictionary<int, Player> plays, Performance perf)
