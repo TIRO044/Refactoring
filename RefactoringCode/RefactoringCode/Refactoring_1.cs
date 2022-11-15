@@ -34,7 +34,7 @@ namespace RefactoringCode
                 result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
-            double volumeCredits = 0;
+            double volumeCredits =  0;
             foreach (var pref in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(pref, plays);
