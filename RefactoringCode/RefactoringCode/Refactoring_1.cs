@@ -35,11 +35,30 @@ namespace RefactoringCode
                 result += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
-            double volumeCredits =  0;
+            result += $"적립 포인트 {TotalVolumeCredits(invoice)}";
+        }
+
+        private double TotalVolumeCredits(Invoice invoice)
+        {
+            double volumeCredits = 0;
             foreach (var pref in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(pref, plays);
             }
+
+            return volumeCredits;
+        }
+
+        private double TotalAmount(Invoice invoice)
+        {
+            double totalAmount;
+            foreach (var pref in invoice.Performances)
+            {
+                double thisAmount = AmountFor(pref);
+                totalAmount += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
+            }
+
+            return totalAmount;
         }
 
         public double VolumeCreditsFor(Performance pref, Dictionary<int, Player> plays)
