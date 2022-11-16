@@ -21,17 +21,18 @@ namespace RefactoringCode
             public double Audiance;
         }
 
-        public void Statement(Invoice invoice, Dictionary<int, Player> plays)
+        private Dictionary<int, Player> plays;
+        public void Statement(Invoice invoice)
         {
             var totalAmount = 0;
             
             var result = "청구 내역";
-            const string format = $"";
+            string format = $"";
 
             foreach (var pref in invoice.Performances)
             {
-                double thisAmount = AmountFor(pref, plays);
-                result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
+                double thisAmount = AmountFor(pref);
+                result += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
             double volumeCredits =  0;
@@ -45,7 +46,7 @@ namespace RefactoringCode
         {
             double volumeCredits = 0;
             volumeCredits += Math.Max(pref.Audiance - 30d, 0d);
-            if (PlayFor(plays, pref).Type == "comedy")
+            if (PlayFor(pref).Type == "comedy")
             {
                 volumeCredits += Math.Floor(pref.Audiance / 5);
             }
@@ -53,15 +54,15 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        public Player PlayFor(Dictionary<int, Player> plays, Performance perf)
+        public Player PlayFor(Performance perf)
         {
             return plays[perf.PlayerId];
         }
 
-        public double AmountFor(Performance aPerformance, Dictionary<int, Player> plays)
+        public double AmountFor(Performance aPerformance)
         {
             double result = 0;
-            switch (PlayFor(plays, aPerformance).Type)
+            switch (PlayFor(aPerformance).Type)
             {
                 case "tragedy":
                     result = 3000;
