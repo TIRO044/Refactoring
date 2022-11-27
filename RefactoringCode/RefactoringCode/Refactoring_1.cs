@@ -14,6 +14,7 @@ namespace RefactoringCode
 
         public class Invoice
         {
+            public string Customer;
             public List<Performance> Performances = new();
         }
 
@@ -23,13 +24,20 @@ namespace RefactoringCode
             public double Audiance;
         }
 
-        public void Statement(Invoice invoice)
+        public struct StatementData
         {
-            var plays = new Dictionary<int, Player>();
-            var result = ReneringTexture(plays, invoice);
+            public string Customer;
         }
 
-        public string ReneringTexture(Dictionary<int, Player> plays, Invoice invoice)
+        public void Statement(Invoice invoice)
+        {
+            var statementData = new StatementData();
+            statementData.Customer = invoice.Customer;
+            var plays = new Dictionary<int, Player>();
+            var result = RenderPlainText(statementData, plays, invoice);
+        }
+
+        public string RenderPlainText(StatementData statementData, Dictionary<int, Player> plays, Invoice invoice)
         {
             var result = "청구 내역";
             string format = $"";
