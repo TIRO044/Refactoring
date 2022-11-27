@@ -1,5 +1,7 @@
 ﻿
 
+using static RefactoringCode.Refactoring_1;
+
 namespace RefactoringCode
 {
     internal class Refactoring_1
@@ -24,8 +26,11 @@ namespace RefactoringCode
         private Dictionary<int, Player> plays;
         public void Statement(Invoice invoice)
         {
-            var totalAmount = 0;
-            
+            var result = ReneringTexture(invoice);
+        }
+
+        public string ReneringTexture(Invoice invoice)
+        {
             var result = "청구 내역";
             string format = $"";
 
@@ -35,7 +40,9 @@ namespace RefactoringCode
                 result += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
+            result += TotalAmount(invoice);
             result += $"적립 포인트 {TotalVolumeCredits(invoice)}";
+            return result;
         }
 
         private double TotalVolumeCredits(Invoice invoice)
@@ -49,9 +56,9 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        private double TotalAmount(Invoice invoice)
+        private string TotalAmount(Invoice invoice)
         {
-            double totalAmount;
+            string totalAmount = string.Empty;
             foreach (var pref in invoice.Performances)
             {
                 double thisAmount = AmountFor(pref);
