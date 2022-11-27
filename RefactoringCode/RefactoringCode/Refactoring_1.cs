@@ -23,13 +23,13 @@ namespace RefactoringCode
             public double Audiance;
         }
 
-        private Dictionary<int, Player> plays;
         public void Statement(Invoice invoice)
         {
-            var result = ReneringTexture(invoice);
+            var plays = new Dictionary<int, Player>();
+            var result = ReneringTexture(plays, invoice);
         }
 
-        public string ReneringTexture(Invoice invoice)
+        public string ReneringTexture(Dictionary<int, Player> plays, Invoice invoice)
         {
             var result = "청구 내역";
             string format = $"";
@@ -37,15 +37,15 @@ namespace RefactoringCode
             foreach (var pref in invoice.Performances)
             {
                 double thisAmount = AmountFor(pref);
-                result += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
+                result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
-            result += TotalAmount(invoice);
-            result += $"적립 포인트 {TotalVolumeCredits(invoice)}";
+            result += TotalAmount(plays, invoice);
+            result += $"적립 포인트 {TotalVolumeCredits(plays, invoice)}";
             return result;
         }
 
-        private double TotalVolumeCredits(Invoice invoice)
+        private double TotalVolumeCredits(Dictionary<int, Player> plays, Invoice invoice)
         {
             double volumeCredits = 0;
             foreach (var pref in invoice.Performances)
@@ -56,13 +56,13 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        private string TotalAmount(Invoice invoice)
+        private string TotalAmount(Dictionary<int, Player> plays, Invoice invoice)
         {
             string totalAmount = string.Empty;
             foreach (var pref in invoice.Performances)
             {
                 double thisAmount = AmountFor(pref);
-                totalAmount += $"{PlayFor(pref).Name}:{thisAmount}:{pref.Audiance}석";
+                totalAmount += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
             }
 
             return totalAmount;
@@ -72,7 +72,7 @@ namespace RefactoringCode
         {
             double volumeCredits = 0;
             volumeCredits += Math.Max(pref.Audiance - 30d, 0d);
-            if (PlayFor(pref).Type == "comedy")
+            if (PlayFor(plays, pref).Type == "comedy")
             {
                 volumeCredits += Math.Floor(pref.Audiance / 5);
             }
@@ -80,7 +80,7 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        public Player PlayFor(Performance perf)
+        public Player PlayFor(Dictionary<int, Player> plays, Performance perf)
         {
             return plays[perf.PlayerId];
         }
