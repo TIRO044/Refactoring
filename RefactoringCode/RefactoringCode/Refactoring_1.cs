@@ -1,5 +1,4 @@
 ﻿
-
 using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
@@ -27,22 +26,25 @@ namespace RefactoringCode
         public struct StatementData
         {
             public string Customer;
+            public List<Performance> performances;
         }
 
         public void Statement(Invoice invoice)
         {
             var statementData = new StatementData();
             statementData.Customer = invoice.Customer;
+            statementData.performances = new List<Performance>(invoice.Performances);
+
             var plays = new Dictionary<int, Player>();
             var result = RenderPlainText(statementData, plays, invoice);
         }
 
         public string RenderPlainText(StatementData statementData, Dictionary<int, Player> plays, Invoice invoice)
         {
-            var result = "청구 내역";
+            var result = $"청구 내역 {statementData.Customer}\n";
             string format = $"";
 
-            foreach (var pref in invoice.Performances)
+            foreach (var pref in statementData.performances)
             {
                 double thisAmount = AmountFor(pref);
                 result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
