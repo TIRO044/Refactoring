@@ -8,17 +8,39 @@ namespace RefactoringCode
         public Performance Performance { get; private set; }
         public Player Player { get; private set; }
 
-        public void Init(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer, Func<Performance, double> a)
+        public PerformanceCaculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
         {
             Performance = pref;
             Player = aPlayer.Invoke(players, Performance);
+        }
+
+        public double GetAmount()
+        {
+            double result = 0;
+            switch (Player.Type)
+            {
+                case "tragedy":
+                    result = 3000;
+                    if (Performance.Audiance > 30)
+                    {
+                        result += 1000 * (Performance.Audiance);
+                    }
+                    break;
+                case "comedy":
+                    result = 4000;
+                    if (Performance.Audiance > 20)
+                    {
+                        result += 1000 + 500 * (Performance.Audiance);
+                    }
+                    break;
+            }
+
+            return result;
         }
     }
 
     internal class StatementUtil
     {
-        private static PerformanceCaculator performanceCalculator = new PerformanceCaculator();
-
         public static StatementData CreateStatementData(Dictionary<int, Player> plays, Invoice invoice)
         {
             var statementData = new StatementData();
@@ -35,13 +57,18 @@ namespace RefactoringCode
             var result = new List<Performance>();
             foreach (var performance in performances)
             {
-                performanceCalculator.Init(performance, player, PlayFor);
+                var performanceCaculator = new PerformanceCaculator(performance, player, PlayFor);
 
                 var r = new Performance();
-                r.Player = performanceCalculator.Player;
+                r.Player = performanceCaculator.Player;
                 r.Amount = AmountFor(performance);
                 r.Audiance = VolumeCreditsFor(performance, player);
                 result.Add(r);
+            }
+
+            double AmountFor(Performance performance)
+            {
+                return new PerformanceCaculator(performance, player, PlayFor).GetAmount();
             }
 
             return result;
@@ -78,28 +105,6 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        private static double AmountFor(Performance aPerformance)
-        {
-            double result = 0;
-            switch (aPerformance.Player.Type)
-            {
-                case "tragedy":
-                    result = 3000;
-                    if (aPerformance.Audiance > 30)
-                    {
-                        result += 1000 * (aPerformance.Audiance);
-                    }
-                    break;
-                case "comedy":
-                    result = 4000;
-                    if (aPerformance.Audiance > 20)
-                    {
-                        result += 1000 + 500 * (aPerformance.Audiance);
-                    }
-                    break;
-            }
-
-            return result;
-        }
+       
     }
 }
