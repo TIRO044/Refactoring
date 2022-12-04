@@ -47,6 +47,7 @@ namespace RefactoringCode
                 {
                     var r = new Performance();
                     r.Player = PlayFor(player, preformance);
+                    r.Amount = AmountFor(preformance);
                     result.Add(r);
                 }
 
@@ -66,8 +67,7 @@ namespace RefactoringCode
 
             foreach (var pref in statementData.Performances)
             {
-                double thisAmount = AmountFor(pref);
-                result += $"{pref.Player.Name}:{thisAmount}:{pref.Audiance}석";
+                result += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석";
             }
 
             result += TotalAmount(statementData);
@@ -91,8 +91,7 @@ namespace RefactoringCode
             string totalAmount = string.Empty;
             foreach (var pref in statementData.Performances)
             {
-                double thisAmount = AmountFor(pref);
-                totalAmount += $"{pref.Player.Name}:{thisAmount}:{pref.Audiance}석";
+                totalAmount += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석";
             }
 
             return totalAmount;
