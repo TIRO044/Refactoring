@@ -3,8 +3,22 @@ using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
 {
+    internal class PerformanceCaculator
+    {
+        public Performance Performance { get; private set; }
+        public Player Player { get; private set; }
+
+        public void Init(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer, Func<Performance, double> a)
+        {
+            Performance = pref;
+            Player = aPlayer.Invoke(players, Performance);
+        }
+    }
+
     internal class StatementUtil
     {
+        private static PerformanceCaculator performanceCalculator = new PerformanceCaculator();
+
         public static StatementData CreateStatementData(Dictionary<int, Player> plays, Invoice invoice)
         {
             var statementData = new StatementData();
@@ -13,29 +27,30 @@ namespace RefactoringCode
             statementData.TotalVolumeCredits = TotalVolumeCredits(statementData);
             statementData.TotalAmount = TotalAmount(statementData);
 
-            List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
-            {
-                var result = new List<Performance>();
-                foreach (var performance in performances)
-                {
-                    var r = new Performance();
-                    r.Player = PlayFor(player, performance);
-                    r.Amount = AmountFor(performance);
-                    r.Audiance = VolumeCreditsFor(performance, player);
-                    result.Add(r);
-                }
-
-                return result;
-            }
-
-            Player PlayFor(Dictionary<int, Player> plays, Performance perf)
-            {
-                return plays[perf.PlayerId];
-            }
-
             return statementData;
         }
 
+        public static List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
+        {
+            var result = new List<Performance>();
+            foreach (var performance in performances)
+            {
+                performanceCalculator.Init(performance, player, PlayFor);
+
+                var r = new Performance();
+                r.Player = performanceCalculator.Player;
+                r.Amount = AmountFor(performance);
+                r.Audiance = VolumeCreditsFor(performance, player);
+                result.Add(r);
+            }
+
+            return result;
+        }
+
+        public static Player PlayFor(Dictionary<int, Player> plays, Performance perf)
+        {
+            return plays[perf.PlayerId];
+        }
 
         private static double TotalVolumeCredits(StatementData statementData)
         {

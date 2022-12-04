@@ -1,11 +1,11 @@
 ﻿
 using System.Numerics;
-using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
 {
     internal class Refactoring_1
     {
+        // 클래스들은 파일 별로 분리되었다고 걍 치자고
         public class Player
         {
             public string Name;
@@ -37,7 +37,7 @@ namespace RefactoringCode
         public void Statement(Invoice invoice)
         {
             var plays = new Dictionary<int, Player>(); // 지금 이새끼 떄문에 존나 헷갈려 시
-            var result = RenderPlainText(Util.CreateStatementData(plays, invoice));
+            var result = RenderPlainText(StatementUtil.CreateStatementData(plays, invoice));
         }
 
         public string RenderPlainText(StatementData statementData)
