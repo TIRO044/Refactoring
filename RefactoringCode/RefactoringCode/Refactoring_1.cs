@@ -21,22 +21,42 @@ namespace RefactoringCode
         {
             public int PlayerId;
             public double Audiance;
+            public Player Player;
+            public double Amount;
         }
 
         public struct StatementData
         {
             public string Customer;
-            public List<Performance> performances;
+            public List<Performance> Performances;
         }
 
         public void Statement(Invoice invoice)
         {
+            var plays = new Dictionary<int, Player>(); // 지금 이새끼 떄문에 존나 헷갈려 시
+
             var statementData = new StatementData();
             statementData.Customer = invoice.Customer;
-            statementData.performances = new List<Performance>(invoice.Performances);
-
-            var plays = new Dictionary<int, Player>();
+            statementData.Performances = EnrichPerformace(plays, invoice.Performances);
             var result = RenderPlainText(statementData, plays, invoice);
+
+            List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
+            {
+                var result = new List<Performance>();
+                foreach(var preformance in performances)
+                {
+                    var r = new Performance();
+                    r.Player = PlayFor(player, preformance);
+                    result.Add(r);
+                }
+
+                return result;
+            }
+
+            Player PlayFor(Dictionary<int, Player> plays, Performance perf)
+            {
+                return plays[perf.PlayerId];
+            }
         }
 
         public string RenderPlainText(StatementData statementData, Dictionary<int, Player> plays, Invoice invoice)
@@ -44,13 +64,13 @@ namespace RefactoringCode
             var result = $"청구 내역 {statementData.Customer}\n";
             string format = $"";
 
-            foreach (var pref in statementData.performances)
+            foreach (var pref in statementData.Performances)
             {
                 double thisAmount = AmountFor(pref);
-                result += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
+                result += $"{pref.Player.Name}:{thisAmount}:{pref.Audiance}석";
             }
 
-            result += TotalAmount(plays, invoice);
+            result += TotalAmount(statementData);
             result += $"적립 포인트 {TotalVolumeCredits(plays, invoice)}";
             return result;
         }
@@ -66,13 +86,13 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        private string TotalAmount(Dictionary<int, Player> plays, Invoice invoice)
+        private string TotalAmount(StatementData statementData)
         {
             string totalAmount = string.Empty;
-            foreach (var pref in invoice.Performances)
+            foreach (var pref in statementData.Performances)
             {
                 double thisAmount = AmountFor(pref);
-                totalAmount += $"{PlayFor(plays, pref).Name}:{thisAmount}:{pref.Audiance}석";
+                totalAmount += $"{pref.Player.Name}:{thisAmount}:{pref.Audiance}석";
             }
 
             return totalAmount;
@@ -82,7 +102,7 @@ namespace RefactoringCode
         {
             double volumeCredits = 0;
             volumeCredits += Math.Max(pref.Audiance - 30d, 0d);
-            if (PlayFor(plays, pref).Type == "comedy")
+            if (pref.Player.Type == "comedy")
             {
                 volumeCredits += Math.Floor(pref.Audiance / 5);
             }
@@ -90,15 +110,11 @@ namespace RefactoringCode
             return volumeCredits;
         }
 
-        public Player PlayFor(Dictionary<int, Player> plays, Performance perf)
-        {
-            return plays[perf.PlayerId];
-        }
 
         public double AmountFor(Performance aPerformance)
         {
             double result = 0;
-            switch (PlayFor(aPerformance).Type)
+            switch (aPerformance.Player.Type)
             {
                 case "tragedy":
                     result = 3000;
