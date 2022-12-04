@@ -1,4 +1,5 @@
 ﻿
+using System.Numerics;
 using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
@@ -36,18 +37,21 @@ namespace RefactoringCode
         public void Statement(Invoice invoice)
         {
             var plays = new Dictionary<int, Player>(); // 지금 이새끼 떄문에 존나 헷갈려 시
+            var result = RenderPlainText(CreateStatementData(plays, invoice));
+        }
 
+        private StatementData CreateStatementData(Dictionary<int, Player> plays, Invoice invoice)
+        {
             var statementData = new StatementData();
             statementData.Customer = invoice.Customer;
             statementData.Performances = EnrichPerformace(plays, invoice.Performances);
             statementData.TotalVolumeCredits = TotalVolumeCredits(statementData);
             statementData.TotalAmount = TotalAmount(statementData);
-            var result = RenderPlainText(statementData);
 
             List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
             {
                 var result = new List<Performance>();
-                foreach(var performance in performances)
+                foreach (var performance in performances)
                 {
                     var r = new Performance();
                     r.Player = PlayFor(player, performance);
@@ -63,6 +67,8 @@ namespace RefactoringCode
             {
                 return plays[perf.PlayerId];
             }
+
+            return statementData;
         }
 
         public string RenderPlainText(StatementData statementData)
