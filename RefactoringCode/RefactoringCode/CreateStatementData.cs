@@ -14,28 +14,45 @@ namespace RefactoringCode
             Player = aPlayer.Invoke(players, Performance);
         }
 
-        public double GetAmount()
+        public double Amount
         {
-            double result = 0;
-            switch (Player.Type)
-            {
-                case "tragedy":
-                    result = 3000;
-                    if (Performance.Audiance > 30)
-                    {
-                        result += 1000 * (Performance.Audiance);
-                    }
-                    break;
-                case "comedy":
-                    result = 4000;
-                    if (Performance.Audiance > 20)
-                    {
-                        result += 1000 + 500 * (Performance.Audiance);
-                    }
-                    break;
-            }
+            get {
+                double result = 0;
+                switch (Player.Type)
+                {
+                    case "tragedy":
+                        result = 3000;
+                        if (Performance.Audiance > 30)
+                        {
+                            result += 1000 * (Performance.Audiance);
+                        }
+                        break;
+                    case "comedy":
+                        result = 4000;
+                        if (Performance.Audiance > 20)
+                        {
+                            result += 1000 + 500 * (Performance.Audiance);
+                        }
+                        break;
+                }
 
-            return result;
+                return result;
+            }
+        }
+
+        public double VolumeCredits
+        {
+            get
+            {
+                double volumeCredits = 0;
+                volumeCredits += Math.Max(Performance.Audiance - 30d, 0d);
+                if (Performance.Player.Type == "comedy")
+                {
+                    volumeCredits += Math.Floor(Performance.Audiance / 5);
+                }
+
+                return volumeCredits;
+            }
         }
     }
 
@@ -61,14 +78,9 @@ namespace RefactoringCode
 
                 var r = new Performance();
                 r.Player = performanceCaculator.Player;
-                r.Amount = AmountFor(performance);
-                r.Audiance = VolumeCreditsFor(performance, player);
+                r.Amount = performanceCaculator.Amount;
+                r.Audiance = performanceCaculator.VolumeCredits;
                 result.Add(r);
-            }
-
-            double AmountFor(Performance performance)
-            {
-                return new PerformanceCaculator(performance, player, PlayFor).GetAmount();
             }
 
             return result;
@@ -92,19 +104,5 @@ namespace RefactoringCode
             statementData.Performances.ForEach(pref => totalAmount += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석\n");
             return totalAmount;
         }
-
-        private static double VolumeCreditsFor(Performance pref, Dictionary<int, Player> plays)
-        {
-            double volumeCredits = 0;
-            volumeCredits += Math.Max(pref.Audiance - 30d, 0d);
-            if (pref.Player.Type == "comedy")
-            {
-                volumeCredits += Math.Floor(pref.Audiance / 5);
-            }
-
-            return volumeCredits;
-        }
-
-       
     }
 }
