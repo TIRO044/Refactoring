@@ -29,6 +29,8 @@ namespace RefactoringCode
         {
             public string Customer;
             public List<Performance> Performances;
+            public double TotalVolumeCredits;
+            public string TotalAmount;
         }
 
         public void Statement(Invoice invoice)
@@ -38,16 +40,19 @@ namespace RefactoringCode
             var statementData = new StatementData();
             statementData.Customer = invoice.Customer;
             statementData.Performances = EnrichPerformace(plays, invoice.Performances);
+            statementData.TotalVolumeCredits = TotalVolumeCredits(statementData);
+            statementData.TotalAmount = TotalAmount(statementData);
             var result = RenderPlainText(statementData, plays, invoice);
 
             List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
             {
                 var result = new List<Performance>();
-                foreach(var preformance in performances)
+                foreach(var performance in performances)
                 {
                     var r = new Performance();
-                    r.Player = PlayFor(player, preformance);
-                    r.Amount = AmountFor(preformance);
+                    r.Player = PlayFor(player, performance);
+                    r.Amount = AmountFor(performance);
+                    r.Audiance = VolumeCreditsFor(performance, player);
                     result.Add(r);
                 }
 
@@ -70,17 +75,18 @@ namespace RefactoringCode
                 result += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석";
             }
 
-            result += TotalAmount(statementData);
-            result += $"적립 포인트 {TotalVolumeCredits(plays, invoice)}";
+            result += $"총액 {statementData.TotalAmount}";
+            result += $"적립 포인트 {statementData.TotalVolumeCredits}";
+
             return result;
         }
 
-        private double TotalVolumeCredits(Dictionary<int, Player> plays, Invoice invoice)
+        private double TotalVolumeCredits(StatementData statementData)
         {
             double volumeCredits = 0;
-            foreach (var pref in invoice.Performances)
+            foreach (var pref in statementData.Performances)
             {
-                volumeCredits += VolumeCreditsFor(pref, plays);
+                volumeCredits += pref.Audiance;
             }
 
             return volumeCredits;
