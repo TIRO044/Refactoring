@@ -42,7 +42,7 @@ namespace RefactoringCode
             statementData.Performances = EnrichPerformace(plays, invoice.Performances);
             statementData.TotalVolumeCredits = TotalVolumeCredits(statementData);
             statementData.TotalAmount = TotalAmount(statementData);
-            var result = RenderPlainText(statementData, plays, invoice);
+            var result = RenderPlainText(statementData);
 
             List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
             {
@@ -65,7 +65,7 @@ namespace RefactoringCode
             }
         }
 
-        public string RenderPlainText(StatementData statementData, Dictionary<int, Player> plays, Invoice invoice)
+        public string RenderPlainText(StatementData statementData)
         {
             var result = $"청구 내역 {statementData.Customer}\n";
             string format = $"";
@@ -75,7 +75,7 @@ namespace RefactoringCode
                 result += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석";
             }
 
-            result += $"총액 {statementData.TotalAmount}";
+            result += $"총 {statementData.TotalAmount}";
             result += $"적립 포인트 {statementData.TotalVolumeCredits}";
 
             return result;
@@ -84,22 +84,14 @@ namespace RefactoringCode
         private double TotalVolumeCredits(StatementData statementData)
         {
             double volumeCredits = 0;
-            foreach (var pref in statementData.Performances)
-            {
-                volumeCredits += pref.Audiance;
-            }
-
+            statementData.Performances.ForEach(pref => volumeCredits += pref.Audiance);
             return volumeCredits;
         }
 
         private string TotalAmount(StatementData statementData)
         {
             string totalAmount = string.Empty;
-            foreach (var pref in statementData.Performances)
-            {
-                totalAmount += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석";
-            }
-
+            statementData.Performances.ForEach(pref => totalAmount += $"{pref.Player.Name}:{pref.Amount}:{pref.Audiance}석\n");
             return totalAmount;
         }
 
