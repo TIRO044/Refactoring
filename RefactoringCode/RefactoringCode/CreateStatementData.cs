@@ -1,8 +1,96 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
 {
+    internal class PerformanceCalculatorFactory
+    {
+        public static PerformanceCalculator CreatePerformance(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
+        {
+            // ㅋㅋ 좀 이상해지는데 java랑 좀 달라서그런지 자꾸 좀 뭔가 이상해지네
+            var player = aPlayer.Invoke(players, pref);
+            switch (player.Type)
+            {
+                case "tragedy":
+
+                    break;
+                case "comedy":
+
+                    break;
+            }
+
+            return new PerformanceCalculator(pref, players, aPlayer);
+        }
+    }
+
+    internal class TragedyCalculator : PerformanceCalculator
+    {
+        public TragedyCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, players, aPlayer)
+        {
+
+        }
+
+        public override double Amount
+        {
+            get
+            {
+                double result = 3000;
+                if (Performance.Audiance > 30)
+                {
+                    result += 1000 * (Performance.Audiance);
+                }
+
+                return result;
+            }
+        }
+
+
+        public override double VolumeCredits
+        {
+            get
+            {
+                double volumeCredits = 0;
+                volumeCredits += Math.Max(Performance.Audiance - 30d, 0d);
+
+                return volumeCredits;
+            }
+        }
+    }
+
+    internal class ComedyCalculator : PerformanceCalculator
+    {
+        public ComedyCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, players, aPlayer)
+        {
+
+        }
+
+        public override double Amount
+        {
+            get
+            {
+                double result = 4000;
+                if (Performance.Audiance > 20)
+                {
+                    result += 1000 + 500 * (Performance.Audiance);
+                }
+
+                return result;
+            }
+        }
+
+        public override double VolumeCredits
+        {
+            get
+            {
+                double volumeCredits = 0;
+                volumeCredits += Math.Max(Performance.Audiance - 30d, 0d);
+                volumeCredits += Math.Floor(Performance.Audiance / 5);
+
+                return volumeCredits;
+            }
+        }
+    }
+
     internal class PerformanceCalculator
     {
         public Performance Performance { get; private set; }
@@ -14,46 +102,9 @@ namespace RefactoringCode
             Player = aPlayer.Invoke(players, Performance);
         }
 
-        public double Amount
-        {
-            get {
-                double result = 0;
-                switch (Player.Type)
-                {
-                    case "tragedy":
-                        result = 3000;
-                        if (Performance.Audiance > 30)
-                        {
-                            result += 1000 * (Performance.Audiance);
-                        }
-                        break;
-                    case "comedy":
-                        result = 4000;
-                        if (Performance.Audiance > 20)
-                        {
-                            result += 1000 + 500 * (Performance.Audiance);
-                        }
-                        break;
-                }
+        public virtual double Amount => throw new Exception("base amount is invalid");
 
-                return result;
-            }
-        }
-
-        public double VolumeCredits
-        {
-            get
-            {
-                double volumeCredits = 0;
-                volumeCredits += Math.Max(Performance.Audiance - 30d, 0d);
-                if (Performance.Player.Type == "comedy")
-                {
-                    volumeCredits += Math.Floor(Performance.Audiance / 5);
-                }
-
-                return volumeCredits;
-            }
-        }
+        public virtual double VolumeCredits => throw new Exception("base amount is invalid");
     }
 
     internal class StatementUtil
@@ -74,13 +125,13 @@ namespace RefactoringCode
             var result = new List<Performance>();
             foreach (var performance in performances)
             {
-                var performanceCaculator = new PerformanceCalculator(performance, player, PlayFor);
+                var performanceCalculator = PerformanceCalculatorFactory.CreatePerformance(performance, player, PlayFor);
 
                 var r = new Performance
                 {
-                    Player = performanceCaculator.Player,
-                    Amount = performanceCaculator.Amount,
-                    Audiance = performanceCaculator.VolumeCredits
+                    Player = performanceCalculator.Player,
+                    Amount = performanceCalculator.Amount,
+                    Audiance = performanceCalculator.VolumeCredits
                 };
                 result.Add(r);
             }
