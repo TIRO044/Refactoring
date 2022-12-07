@@ -3,12 +3,12 @@ using static RefactoringCode.Refactoring_1;
 
 namespace RefactoringCode
 {
-    internal class PerformanceCaculator
+    internal class PerformanceCalculator
     {
         public Performance Performance { get; private set; }
         public Player Player { get; private set; }
 
-        public PerformanceCaculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
+        public PerformanceCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
         {
             Performance = pref;
             Player = aPlayer.Invoke(players, Performance);
@@ -62,24 +62,26 @@ namespace RefactoringCode
         {
             var statementData = new StatementData();
             statementData.Customer = invoice.Customer;
-            statementData.Performances = EnrichPerformace(plays, invoice.Performances);
+            statementData.Performances = EnrichPerformance(plays, invoice.Performances);
             statementData.TotalVolumeCredits = TotalVolumeCredits(statementData);
             statementData.TotalAmount = TotalAmount(statementData);
 
             return statementData;
         }
 
-        public static List<Performance> EnrichPerformace(Dictionary<int, Player> player, List<Performance> performances)
+        public static List<Performance> EnrichPerformance(Dictionary<int, Player> player, List<Performance> performances)
         {
             var result = new List<Performance>();
             foreach (var performance in performances)
             {
-                var performanceCaculator = new PerformanceCaculator(performance, player, PlayFor);
+                var performanceCaculator = new PerformanceCalculator(performance, player, PlayFor);
 
-                var r = new Performance();
-                r.Player = performanceCaculator.Player;
-                r.Amount = performanceCaculator.Amount;
-                r.Audiance = performanceCaculator.VolumeCredits;
+                var r = new Performance
+                {
+                    Player = performanceCaculator.Player,
+                    Amount = performanceCaculator.Amount,
+                    Audiance = performanceCaculator.VolumeCredits
+                };
                 result.Add(r);
             }
 
