@@ -7,7 +7,6 @@ namespace RefactoringCode
     {
         public static PerformanceCalculator CreatePerformance(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
         {
-            // ㅋㅋ 좀 이상해지는데 java랑 좀 달라서그런지 자꾸 좀 뭔가 이상해지네
             var player = aPlayer.Invoke(players, pref);
             switch (player.Type)
             {
