@@ -11,20 +11,18 @@ namespace RefactoringCode
             switch (player.Type)
             {
                 case "tragedy":
-
-                    break;
+                    return new TragedyCalculator(pref, player, aPlayer);
                 case "comedy":
-
-                    break;
+                    return new TragedyCalculator(pref, player, aPlayer);
             }
 
-            return new PerformanceCalculator(pref, players, aPlayer);
+            return new PerformanceCalculator(pref, player, aPlayer);
         }
     }
 
     internal class TragedyCalculator : PerformanceCalculator
     {
-        public TragedyCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, players, aPlayer)
+        public TragedyCalculator(Performance pref, Player player, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, player, aPlayer)
         {
 
         }
@@ -58,7 +56,7 @@ namespace RefactoringCode
 
     internal class ComedyCalculator : PerformanceCalculator
     {
-        public ComedyCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, players, aPlayer)
+        public ComedyCalculator(Performance pref, Player player, Func<Dictionary<int, Player>, Performance, Player> aPlayer) : base(pref, player, aPlayer)
         {
 
         }
@@ -95,10 +93,10 @@ namespace RefactoringCode
         public Performance Performance { get; private set; }
         public Player Player { get; private set; }
 
-        public PerformanceCalculator(Performance pref, Dictionary<int, Player> players, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
+        public PerformanceCalculator(Performance pref, Player player, Func<Dictionary<int, Player>, Performance, Player> aPlayer)
         {
             Performance = pref;
-            Player = aPlayer.Invoke(players, Performance);
+            Player = player;
         }
 
         public virtual double Amount => throw new Exception("base amount is invalid");
