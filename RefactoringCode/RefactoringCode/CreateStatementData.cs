@@ -13,7 +13,7 @@ namespace RefactoringCode
                 case "tragedy":
                     return new TragedyCalculator(pref, player, aPlayer);
                 case "comedy":
-                    return new TragedyCalculator(pref, player, aPlayer);
+                    return new ComedyCalculator(pref, player, aPlayer);
             }
 
             return new PerformanceCalculator(pref, player, aPlayer);
