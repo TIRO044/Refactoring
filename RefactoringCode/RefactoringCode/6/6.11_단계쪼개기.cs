@@ -23,7 +23,7 @@
         {
             class OrderDataClass
             {
-                public string ProductID;
+                public string ProductID = string.Empty;
                 public int Quantity;
             }
 
