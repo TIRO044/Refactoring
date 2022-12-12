@@ -38,7 +38,7 @@
                 OrderDataClass ParseOrder(string aString)
                 {
                     var values = aString.Split("s+");
-                    return new OrderDataClass { ProductID = values[1], Quantity = int.Parse(values[0]) };
+                    return new OrderDataClass { ProductID = values[0].Split('-')[1], Quantity = int.Parse(values[1]) };
                 }
 
                 int Price(OrderDataClass order, Dictionary<string, int> priceOrder)
