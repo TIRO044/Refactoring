@@ -77,9 +77,11 @@
         {
             var observer = new Observer();
             var subject = new Subject();
-
             var disposer = observer.Register(subject);
+            
             subject.SendMessage("RegisterObserver");
+
+            // 요런 식이다. 근데 이건 Subject를 좀 주도적으로 컨트롤 하는 구조가 핑료하구나
 
             // 요런 식이다.. 요러믄 뭐 흠 부모 클래스를 subjecter로 하고 자식을 subject로 하는 구조라던가?
             // 
