@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace DesignPattern.StrategyPattern
+﻿namespace DesignPattern.StrategyPattern
 {
     class Before
     {

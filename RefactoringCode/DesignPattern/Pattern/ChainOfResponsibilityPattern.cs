@@ -64,7 +64,8 @@ namespace DesignPattern.Pattern
             var squirrel = new SquirrelHandler();
             var squirrel1 = new SquirrelHandler();
 
-            monkey.SetNext(squirrel).SetNext(squirrel1);
+            monkey.SetNext(squirrel)
+                  .SetNext(squirrel1);
             // chain
         }
     }
